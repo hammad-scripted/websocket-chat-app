@@ -5,14 +5,31 @@ let userCount = 0;
 wss.on('connection', (ws) => {
   userCount++;
   console.log(`New client connected. Total clients: ${userCount}`);
+  console.log(
+    `Message sent by User: ${userCount} WebSocket connection established.`,
+  );
 
-  // listen for this client to send messages
+  // // listen for this client to send messages
+  // ws.on('message', (message) => {
+  //   console.log(`Received message: ${message}`);
+  //   // broadcast the message to all connected clients
+  //   wss.clients.forEach((client) => {
+  //     if (client.readyState === client.OPEN) {
+  //       client.send(message);
+  //     }
+  //   });
+  // });
+
+  //* listen for the client to send messages and broadcast them to all connected clients
   ws.on('message', (message) => {
     console.log(`Received message: ${message}`);
-    // broadcast the message to all connected clients
+
     wss.clients.forEach((client) => {
+      // check if the connection is open or is it closed
       if (client.readyState === client.OPEN) {
-        client.send(message);
+        setTimeout(() => {
+          client.send(`Echo: ${message.toString() + ' send by server'}`);
+        }, 1000);
       }
     });
   });
